@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -28,20 +29,20 @@ export function Navigation({ currentPage = "home" }: NavigationProps) {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Image
-            src="/logo.jpg"
+            src="/logo.png"
             alt="Crown Logo"
-            width={40}
-            height={40}
+            width={50}
+            height={50}
             className="cursor-pointer rounded-full border border-pink-300"
           />
-          <div className="flex-shrink-0">
+          {/* <div className="flex-shrink-0">
             <Link
               href="/"
               className="text-2xl font-bold text-pink-700 hover:text-pink-900 transition-colors"
             >
-              Crown
+              Crown Enterprises
             </Link>
-          </div>
+          </div> */}
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">

@@ -8,6 +8,7 @@ export const links: NavLink[] = [
   { href: "/category/all-products", label: "Products" },
   { href: "/about-us", label: "About" },
   { href: "/contact-us", label: "Contact" },
+  { href: "/admin/products/create", label: "dashboard" },
 ];
 
 export const adminLinks: NavLink[] = [

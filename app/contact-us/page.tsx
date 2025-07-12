@@ -99,8 +99,8 @@ export default function ContactPage() {
                       <Mail className="h-6 w-6 text-pink-500" />
                       <div>
                         <h3 className="text-lg font-medium">Email</h3>
-                        <p className="text-pink-600">chennai@geniushairs.com</p>
-                        <p className="text-pink-600">support@geniushairs.com</p>
+                        <p className="text-pink-600">chennai@Crown Enterprises.com</p>
+                        <p className="text-pink-600">support@Crown Enterprises.com</p>
                       </div>
                     </div>
 
@@ -108,8 +108,8 @@ export default function ContactPage() {
                       <Phone className="h-6 w-6 text-pink-500" />
                       <div>
                         <h3 className="text-lg font-medium">Phone</h3>
-                        <p className="text-pink-600">+91 84 2862 2862</p>
-                        <p className="text-pink-600">+91 98 4567 8901</p>
+                        <p className="text-pink-600">+91 1111111111</p>
+                        <p className="text-pink-600">+91 1111111111</p>
                       </div>
                     </div>
 

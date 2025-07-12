@@ -91,7 +91,7 @@ export function ProductGrid() {
               </Button>
             </div>
             {product.originalPrice > product.price && (
-              <div className="absolute top-3 left-3 bg-rose-500 text-white px-2 py-1 rounded-md text-xs font-semibold">
+              <div className="absolute top-3 left-3 bg-pink-500 text-white px-2 py-1 rounded-md text-xs font-semibold">
                 SALE
               </div>
             )}

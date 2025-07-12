@@ -30,9 +30,6 @@ export default function HomePage() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white">
               <span className="block drop-shadow-lg">Crown Enterprises</span>
             </h1>
-            <p className="text-xl sm:text-2xl md:text-3xl mb-8 font-light max-w-3xl mx-auto leading-relaxed text-pink-100">
-              Shop top-quality human hair extensions, wigs, and more
-            </p>
             <Button
               asChild
               size="lg"

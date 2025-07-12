@@ -1,3 +1,4 @@
+
 import { Sidebar } from "@/components/sidebar";
 import { ProductGrid } from "@/components/product-grid";
 import { Navigation } from "@/components/navigation";

@@ -1,4 +1,5 @@
 "use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +10,6 @@ import {
 import { LuAlignLeft } from "react-icons/lu";
 import Link from "next/link";
 import { Button } from "./button";
-import { links } from "@/utils/links";
 import UserIcon from "./UserIcon";
 import {
   SignInButton,
@@ -20,9 +20,23 @@ import {
 } from "@clerk/nextjs";
 import SignOutLink from "./SignOutLink";
 
+// 🔥 REMOVE links import (we'll handle it inline)
+// import { links } from "@/utils/links";
+
 function LinksDropdown() {
   const { userId } = useAuth();
-  const isAdmin = userId === process.env.ADMIN_USER_ID;
+  const isAdmin =
+    userId?.trim() === process.env.NEXT_PUBLIC_ADMIN_USER_ID?.trim();
+
+  const links = [
+    { label: "home", href: "/" },
+    { label: "about", href: "/about" },
+    { label: "contact", href: "/contact" },
+    { label: "products", href: "/products" },
+    ...(isAdmin
+      ? [{ label: "dashboard", href: "/admin/products/create" }]
+      : []), // ✅ include if admin
+  ];
 
   return (
     <DropdownMenu>
@@ -58,19 +72,16 @@ function LinksDropdown() {
         </SignedOut>
 
         <SignedIn>
-          {links.map((link) => {
-            if (link.label === "dashboard" && !isAdmin) return null;
-            return (
-              <DropdownMenuItem
-                key={link.href}
-                className="hover:bg-pink-100 hover:text-pink-900 font-medium transition-colors"
-              >
-                <Link href={link.href} className="capitalize w-full">
-                  {link.label}
-                </Link>
-              </DropdownMenuItem>
-            );
-          })}
+          {links.map((link) => (
+            <DropdownMenuItem
+              key={link.href}
+              className="hover:bg-pink-100 hover:text-pink-900 font-medium transition-colors"
+            >
+              <Link href={link.href} className="capitalize w-full">
+                {link.label}
+              </Link>
+            </DropdownMenuItem>
+          ))}
 
           <DropdownMenuSeparator className="bg-pink-200" />
 

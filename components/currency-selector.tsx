@@ -26,7 +26,7 @@ export function CurrencySelector() {
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-2 text-pink-700 hover:text-pink-600 hover:bg-pink-100 transition-colors"
+          className="flex items-center gap-2 text-pink-700 hover:text-pink-600 border-pink-50 hover:!bg-pink-100 transition-colors"
         >
           <Globe size={16} />
           <span className="font-medium">{selectedCurrency.code}</span>
@@ -50,7 +50,7 @@ export function CurrencySelector() {
                 selectedCurrency.code === currency.code
                   ? "bg-pink-100 font-semibold"
                   : ""
-              } hover:!bg-pink-100 hover:text-pink-800`}
+              } hover:!bg-pink-100 hover:!text-pink-800`}
           >
             <div className="flex items-center gap-2">
               <span className="text-lg">{currency.symbol}</span>

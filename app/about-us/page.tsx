@@ -18,7 +18,7 @@ export default function AboutPage() {
               Our Story
             </h1>
             <p className="text-xl text-pink-600 max-w-3xl mx-auto leading-relaxed">
-              Founded with a passion for authentic beauty, Genius Hairs has been
+              Founded with a passion for authentic beauty, Crown Enterprises has been
               transforming lives through premium hair extensions for over a
               decade.
             </p>
@@ -31,7 +31,7 @@ export default function AboutPage() {
                 Premium Quality, Authentic Beauty
               </h2>
               <p className="text-lg text-pink-600 leading-relaxed">
-                At Genius Hairs, we believe that every woman deserves to feel
+                At Crown Enterprises, we believe that every woman deserves to feel
                 confident and beautiful. Our journey began with a simple
                 mission: to provide the highest quality, 100% virgin Indian
                 human hair extensions that look and feel completely natural.
