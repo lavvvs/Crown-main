@@ -1,19 +1,30 @@
 "use client";
 
-import { SignOutButton } from "@clerk/nextjs";
-import { useToast } from "./use-toasts";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { useCallback } from "react";
+import { SignOutButton, useClerk } from "@clerk/nextjs";
+
 function SignOutLink() {
+  const { signOut } = useClerk();
   const { toast } = useToast();
-  const handleLogout = () => {
-    toast({ description: "Logout Successful" });
-  };
+  const router = useRouter();
+
+  const handleLogout = useCallback(async () => {
+    toast({ description: "Logged out successfully!" });
+
+    // small delay so the toast is visible before redirect
+    setTimeout(async () => {
+      await signOut();
+      router.push("/"); // redirect to home after logout
+    }, 500);
+  }, [toast, router, signOut]);
+
   return (
-    <SignOutButton>
-      <Link href="/" className="w-full text-left" onClick={handleLogout}>
-        Logout
-      </Link>
-    </SignOutButton>
+    <button onClick={handleLogout} className="w-full text-left">
+      Logout
+    </button>
   );
 }
+
 export default SignOutLink;

@@ -7,6 +7,9 @@ type FormInputProps = {
   label?: string;
   defaultValue?: string;
   placeholder?: string;
+  min?: number;
+  max?: number;
+  step?: number;
 };
 
 function FormInput({

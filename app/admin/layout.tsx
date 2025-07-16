@@ -1,11 +1,28 @@
+"use client";
+
 import { Separator } from "@/components/ui/separator";
 import Sidebar from "./Sidebar";
+import { useSearchParams } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const status = searchParams.get("status");
+
+  useEffect(() => {
+    if (status === "created") {
+      toast({ title: "✅ Product Created Successfully!" });
+    } else if (status === "updated") {
+      toast({ title: "✅ Product Updated!" });
+    } else if (status === "image") {
+      toast({ title: "🖼️ Product Image Updated!" });
+    }
+  }, [status, toast]);
+
   return (
     <div className="min-h-screen bg-pink-100">
-      {" "}
-      {/* 👈 page-wide background */}
       <h2 className="text-3xl font-semibold text-pink-700 pl-4 pt-6">
         Dashboard
       </h2>

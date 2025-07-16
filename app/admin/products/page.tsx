@@ -20,34 +20,40 @@ async function AdminProductsPage() {
   if (items.length === 0) return <EmptyList />;
 
   return (
-    <section>
-      <Table>
-        <TableCaption className="capitalize">
+    <section className="bg-pink-50 p-6 rounded-xl shadow">
+      <h1 className="text-2xl font-bold text-pink-800 mb-4">Admin Products</h1>
+      <Table className="border border-pink-200 rounded-md overflow-hidden shadow-md">
+        <TableCaption className="capitalize text-pink-600">
           total products : {items.length}
         </TableCaption>
-        <TableHeader>
+        <TableHeader className="bg-pink-100 text-pink-800">
           <TableRow>
-            <TableHead>Product Name</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="text-pink-700">Product Name</TableHead>
+            <TableHead className="text-pink-700">Company</TableHead>
+            <TableHead className="text-pink-700">Price</TableHead>
+            <TableHead className="text-pink-700">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.map((item) => {
             const { id: productId, name, company, price } = item;
             return (
-              <TableRow key={productId}>
+              <TableRow
+                key={productId}
+                className="hover:bg-pink-100 transition-colors duration-200"
+              >
                 <TableCell>
                   <Link
                     href={`/products/${productId}`}
-                    className="underline text-muted-foreground tracking-wide capitalize"
+                    className="underline text-pink-600 hover:text-pink-800 transition"
                   >
                     {name}
                   </Link>
                 </TableCell>
-                <TableCell>{company}</TableCell>
-                <TableCell>{formatCurrency(price)}</TableCell>
+                <TableCell className="text-pink-700">{company}</TableCell>
+                <TableCell className="text-pink-700">
+                  {formatCurrency(price)}
+                </TableCell>
                 <TableCell className="flex items-center gap-x-2">
                   <Link href={`/admin/products/${productId}/edit`}>
                     <IconButton actionType="edit" />

@@ -1,29 +1,38 @@
 "use client";
 
-import { useFormState } from "react-dom";
-import { useEffect } from "react";
+import { useActionState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { actionFunction } from "@/utils/types";
-import { useActionState } from "react";
 
-const initialState = {
-  message: "",
+const initialState = { message: "" };
+
+type ServerAction = (
+  prevState: any,
+  formData: FormData
+) => Promise<{ message: string }>;
+
+type Props = {
+  action: ServerAction;
+  children: React.ReactNode;
+  redirectTo?: string; // optional route to push after success
 };
 
-function FormContainer({
-  action,
-  children,
-}: {
-  action: actionFunction;
-  children: React.ReactNode;
-}) {
+export default function FormContainer({ action, children, redirectTo }: Props) {
   const [state, formAction] = useActionState(action, initialState);
   const { toast } = useToast();
+
   useEffect(() => {
-    if (state.message) {
+    if (state?.message) {
       toast({ description: state.message });
+
+      if (redirectTo) {
+        window.location.href = redirectTo;
+      }
     }
-  }, [state]);
-  return <form action={formAction}>{children}</form>;
+  }, [state, redirectTo]);
+
+  return (
+    <form action={formAction} className="space-y-4">
+      {children}
+    </form>
+  );
 }
-export default FormContainer;

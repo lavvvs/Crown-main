@@ -180,6 +180,21 @@ input[type="number"] {
 }
 
 @layer base {
+  :focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  [role="combobox"]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #ec4899 !important; /* Tailwind pink-500 */
+  }
+  /* On focus too (in some browsers) */
+  [role="combobox"]:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #ec4899 !important;
+  }
   * {
     @apply border-border;
   }

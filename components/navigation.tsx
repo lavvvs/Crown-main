@@ -1,13 +1,14 @@
-
 "use client";
 
 import Link from "next/link";
 import { CurrencySelector } from "./currency-selector";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LinksDropdown from "./LinksDropdown";
 import Image from "next/image";
+import { useCartStore } from "@/store/cart-store";
+import { fetchCartItems } from "@/utils/actions"; // make sure this is a server action that returns the cart count
 
 interface NavigationProps {
   currentPage?: string;
@@ -15,6 +16,7 @@ interface NavigationProps {
 
 export function Navigation({ currentPage = "home" }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { cartCount, setCartCount } = useCartStore();
 
   const navItems = [
     { href: "/", label: "Home", key: "home" },
@@ -23,26 +25,32 @@ export function Navigation({ currentPage = "home" }: NavigationProps) {
     { href: "/contact-us", label: "Contact", key: "contact" },
   ];
 
+  useEffect(() => {
+    async function loadCartCount() {
+      try {
+        const count = await fetchCartItems();
+        setCartCount(count);
+      } catch (error) {
+        console.error("Failed to fetch cart count", error);
+      }
+    }
+    loadCartCount();
+  }, [setCartCount]);
+
   return (
     <nav className="bg-pink-50 border-b border-pink-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Image
-            src="/logo.png"
-            alt="Crown Logo"
-            width={50}
-            height={50}
-            className="cursor-pointer rounded-full border border-pink-300"
-          />
-          {/* <div className="flex-shrink-0">
-            <Link
-              href="/"
-              className="text-2xl font-bold text-pink-700 hover:text-pink-900 transition-colors"
-            >
-              Crown Enterprises
-            </Link>
-          </div> */}
+          <Link href="/">
+            <Image
+              src="/logo.png"
+              alt="Crown Logo"
+              width={50}
+              height={50}
+              className="cursor-pointer rounded-full border border-pink-300"
+            />
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -67,16 +75,20 @@ export function Navigation({ currentPage = "home" }: NavigationProps) {
             <LinksDropdown />
 
             {/* Shopping Cart */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative text-pink-700 hover:text-pink-900 hover:bg-pink-100 hover:border border-pink-400"
-            >
-              <ShoppingCart size={20} />
-              <span className="absolute -top-1 -right-1 bg-pink-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </Button>
+            <Link href="/cart">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="relative text-pink-700 hover:text-pink-900 hover:bg-pink-100 hover:border border-pink-400"
+              >
+                <ShoppingCart size={20} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-pink-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
 
             {/* Mobile menu toggle */}
             <div className="md:hidden">

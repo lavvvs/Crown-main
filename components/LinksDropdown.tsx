@@ -16,7 +16,7 @@ import {
   SignedIn,
   SignedOut,
   SignUpButton,
-  useAuth,
+  useUser,
 } from "@clerk/nextjs";
 import SignOutLink from "./SignOutLink";
 
@@ -24,9 +24,13 @@ import SignOutLink from "./SignOutLink";
 // import { links } from "@/utils/links";
 
 function LinksDropdown() {
-  const { userId } = useAuth();
+  const { user } = useUser();
+  const userId = user?.id;
   const isAdmin =
     userId?.trim() === process.env.NEXT_PUBLIC_ADMIN_USER_ID?.trim();
+  console.log("🪪 Clerk User ID:", userId);
+  console.log("🔐 Env Admin ID:", process.env.NEXT_PUBLIC_ADMIN_USER_ID);
+  console.log("✅ isAdmin:", isAdmin);
 
   const links = [
     { label: "home", href: "/" },
@@ -37,7 +41,15 @@ function LinksDropdown() {
       ? [{ label: "dashboard", href: "/admin/products/create" }]
       : []), // ✅ include if admin
   ];
-
+  {
+    userId && (
+      <div className="text-xs text-pink-700 px-4 py-2">
+        Logged in as: {userId}
+        <br />
+        Admin: {isAdmin ? "✅ YES" : "❌ NO"}
+      </div>
+    );
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -14,6 +14,7 @@ type SubmitButtonProps = {
   className?: string;
   text?: string;
   size?: btnSize;
+  children?: React.ReactNode;
 };
 
 export function SubmitButton({

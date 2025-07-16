@@ -1,11 +1,13 @@
-
 import { Sidebar } from "@/components/sidebar";
 import { ProductGrid } from "@/components/product-grid";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CurrencyProvider } from "@/contexts/currency-context";
+import { fetchAllProducts } from "@/utils/actions";
 
-export default function AllProductsPage() {
+export default async function AllProductsPage() {
+  const products = await fetchAllProducts({ search: "" });
+
   return (
     <CurrencyProvider>
       <div className="min-h-screen bg-pink-50">
@@ -30,7 +32,9 @@ export default function AllProductsPage() {
             {/* Product Grid */}
             <div className="lg:w-3/4">
               <div className="mb-6 flex justify-between items-center">
-                <p className="text-pink-600">Showing 24 of 156 products</p>
+                <p className="text-pink-600">
+                  Showing {products.length} products
+                </p>
                 <select className="border border-pink-300 bg-pink-100 text-pink-700 rounded-md px-3 py-2 text-sm">
                   <option>Sort by: Featured</option>
                   <option>Price: Low to High</option>
@@ -39,7 +43,7 @@ export default function AllProductsPage() {
                   <option>Best Selling</option>
                 </select>
               </div>
-              <ProductGrid />
+              <ProductGrid products={products} />
             </div>
           </div>
         </div>

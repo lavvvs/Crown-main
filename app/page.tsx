@@ -6,8 +6,11 @@ import { Sidebar } from "@/components/sidebar";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { CurrencyProvider } from "@/contexts/currency-context";
+import { fetchFeaturedProducts } from "@/utils/actions"; // ✅ fetch function added
 
-export default function HomePage() {
+export default async function HomePage() {
+  const featuredProducts = await fetchFeaturedProducts(); // ✅ fetch featured products
+
   return (
     <CurrencyProvider>
       <div className="min-h-screen bg-pink-50 text-pink-900">
@@ -58,7 +61,9 @@ export default function HomePage() {
                   Discover our premium collection of hair extensions
                 </p>
               </div>
-              <ProductGrid />
+
+              {/* ✅ Pass featured products into the grid */}
+              <ProductGrid products={featuredProducts} />
             </div>
           </div>
         </div>

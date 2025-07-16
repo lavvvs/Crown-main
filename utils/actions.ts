@@ -1,5 +1,7 @@
 "use server";
 
+import { deleteImage, uploadImage } from "@/utils/cloudinary";
+
 import db from "@/utils/db";
 import { currentUser, auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -9,7 +11,7 @@ import {
   reviewSchema,
   validateWithZodSchema,
 } from "./schemas";
-import { deleteImage, uploadImage } from "./supabase";
+//import { deleteImage, uploadImage } from "./supabase";
 import { revalidatePath } from "next/cache";
 import { Cart } from "@prisma/client";
 const getAuthUser = async () => {
@@ -45,9 +47,11 @@ export const fetchAllProducts = async ({ search = "" }: { search: string }) => {
     where: {
       OR: [
         { name: { contains: search, mode: "insensitive" } },
-        { company: { contains: search, mode: "insensitive" } },
+        { color: { has: search } }, // Array field
+        { texture: { has: search } },
       ],
     },
+
     orderBy: {
       createdAt: "desc",
     },
@@ -71,24 +75,54 @@ export const createProductAction = async (
   formData: FormData
 ): Promise<{ message: string }> => {
   const user = await getAuthUser();
+
   try {
-    const rawData = Object.fromEntries(formData);
+    const rawData = {
+      ...Object.fromEntries(formData),
+      color: formData.getAll("color[]"),
+      length: formData.getAll("length[]"),
+      texture: formData.getAll("texture[]"),
+    };
     const file = formData.get("image") as File;
+
     const validatedFields = validateWithZodSchema(productSchema, rawData);
     const validatedFile = validateWithZodSchema(imageSchema, { image: file });
     const fullPath = await uploadImage(validatedFile.image);
 
+    // 🆕 Extract extra fields
+    const color = formData.getAll("color[]") as string[];
+    const length = formData.getAll("length[]") as string[];
+    const texture = formData.getAll("texture[]") as string[];
+
+    const rating = parseFloat(formData.get("rating") as string);
+
     await db.product.create({
       data: {
-        ...validatedFields,
+        name: validatedFields.name,
+        price: validatedFields.price,
+        featured: validatedFields.featured,
         image: fullPath,
         clerkId: user.id,
+        color: validatedFields.color,
+        length: validatedFields.length,
+        texture: validatedFields.texture,
+        rating: validatedFields.rating,
       },
     });
+
+    // ✅ Revalidate pages conditionally
+    revalidatePath("/admin/products");
+    revalidatePath("/category/all-products");
+    if (validatedFields.featured) {
+      revalidatePath("/");
+    }
+
+    redirect("/admin/products?status=created");
+
+    return { message: "Product created successfully" };
   } catch (error) {
     return renderError(error);
   }
-  redirect("/admin/products");
 };
 
 export const fetchAdminProducts = async () => {
@@ -112,6 +146,7 @@ export const deleteProductAction = async (prevState: { productId: string }) => {
     });
     await deleteImage(product.image);
     revalidatePath("/admin/products");
+    redirect("/admin/products?status=deleted");
     return { message: "product removed" };
   } catch (error) {
     return renderError(error);
@@ -136,7 +171,22 @@ export const updateProductAction = async (
   await getAdminUser();
   try {
     const productId = formData.get("id") as string;
-    const rawData = Object.fromEntries(formData);
+    // Properly extract array values
+    const color = formData.getAll("color[]") as string[];
+    const length = formData.getAll("length[]") as string[];
+    const texture = formData.getAll("texture[]") as string[];
+    const rating = parseFloat(formData.get("rating") as string);
+    const featured = formData.get("featured") === "on";
+
+    const rawData = {
+      ...Object.fromEntries(formData),
+      color,
+      length,
+      texture,
+      rating,
+      featured,
+    };
+
     const validatedFields = validateWithZodSchema(productSchema, rawData);
 
     await db.product.update({
@@ -144,10 +194,18 @@ export const updateProductAction = async (
         id: productId,
       },
       data: {
-        ...validatedFields,
+        name: validatedFields.name,
+        price: validatedFields.price,
+        featured: validatedFields.featured,
+        color: validatedFields.color,
+        length: validatedFields.length,
+        texture: validatedFields.texture,
+        rating: validatedFields.rating,
       },
     });
     revalidatePath(`/admin/products/${productId}/edit`);
+    redirect(`/admin/products/${productId}/edit?status=updated`);
+
     return { message: "Product updated successfully" };
   } catch (error) {
     return renderError(error);
@@ -175,6 +233,8 @@ export const updateProductImageAction = async (
       },
     });
     revalidatePath(`/admin/products/${productId}/edit`);
+    redirect(`/admin/products/${productId}/edit?status=image`);
+
     return { message: "Product Image updated successfully" };
   } catch (error) {
     return renderError(error);
@@ -238,7 +298,7 @@ export const fetchUserFavorites = async () => {
   return favorites;
 };*/
 
-export const createReviewAction = async (
+/*export const createReviewAction = async (
   prevState: any,
   formData: FormData
 ) => {
@@ -331,7 +391,7 @@ export const findExistingReview = async (userId: string, productId: string) => {
     },
   });
 };
-
+*/
 export const fetchCartItems = async () => {
   const { userId } = await auth();
   const cart = await db.cart.findFirst({
@@ -462,15 +522,18 @@ export const updateCart = async (cart: Cart) => {
 };
 
 export const addToCartAction = async (prevState: any, formData: FormData) => {
+  console.log("🎯 addToCartAction triggered");
   const user = await getAuthUser();
   try {
     const productId = formData.get("productId") as string;
     const amount = Number(formData.get("amount"));
+    console.log("🧾 productId:", productId, "🛒 amount:", amount);
     await fetchProduct(productId);
     const cart = await fetchOrCreateCart({ userId: user.id });
     await updateOrCreateCartItem({ productId, cartId: cart.id, amount });
     await updateCart(cart);
   } catch (error) {
+    console.error("❌ Error in addToCartAction:", error);
     return renderError(error);
   }
   redirect("/cart");

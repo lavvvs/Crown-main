@@ -34,7 +34,7 @@ function ImageInputContainer(props: ImageInputContainerProps) {
       <Button
         variant="outline"
         size="sm"
-        className="text-pink-700 border-pink-400 hover:bg-pink-100 hover:text-pink-900 transition"
+        className="text-pink-50 bg-pink-600 border-pink-400 hover:bg-pink-700 hover:text-pink-50 transition"
         onClick={() => setUpdateFormVisible((prev) => !prev)}
       >
         {text}
