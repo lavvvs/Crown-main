@@ -11,14 +11,15 @@ export interface Currency {
 }
 
 const currencies: Currency[] = [
-  { code: "USD", symbol: "$", name: "US Dollar", rate: 1.0 },
-  { code: "GBP", symbol: "£", name: "British Pound", rate: 0.79 },
-  { code: "EUR", symbol: "€", name: "Euro", rate: 0.92 },
-  { code: "INR", symbol: "₹", name: "Indian Rupee", rate: 83.12 },
-  { code: "CAD", symbol: "C$", name: "Canadian Dollar", rate: 1.36 },
-  { code: "RUB", symbol: "₽", name: "Russian Ruble", rate: 92.5 },
-  { code: "AUD", symbol: "A$", name: "Australian Dollar", rate: 1.52 },
-]
+  { code: "USD", symbol: "$", name: "US Dollar", rate: 1.0 },         // Base currency
+  { code: "GBP", symbol: "£", name: "British Pound", rate: 0.77 },
+  { code: "EUR", symbol: "€", name: "Euro", rate: 0.86 },
+  { code: "INR", symbol: "₹", name: "Indian Rupee", rate: 86.17 },
+  { code: "CAD", symbol: "C$", name: "Canadian Dollar", rate: 1.37 },
+  { code: "RUB", symbol: "₽", name: "Russian Ruble", rate: 92.41 },
+  { code: "AUD", symbol: "A$", name: "Australian Dollar", rate: 1.53 },
+];
+
 
 interface CurrencyContextType {
   selectedCurrency: Currency

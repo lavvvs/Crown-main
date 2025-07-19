@@ -54,6 +54,26 @@ function CreateProductPage() {
     "Natural Straight",
     "Natural Wavy",
   ];
+  const categories = [
+  
+  "613 Blonde",
+  "Best Sellers",
+  "Blonde Shades",
+  "Bulk Hair - Blonde S/D",
+  "Closures",
+  "DIY Hair",
+  "Double Drawn",
+  "Frontals",
+  "Grey Hair",
+  "Jet Black",
+  "M/W Bundles",
+  "Now Trending",
+  "OMBRE COLORS",
+  "Ponytail Extensions",
+  "S/D Bulk Hair",
+  "Wigs",
+];
+
 
   return (
     <section className="bg-pink-50 p-6 rounded-xl shadow-sm border border-pink-100 max-w-5xl mx-auto mt-10">
@@ -89,6 +109,12 @@ function CreateProductPage() {
               label="Hair Texture"
               options={textures}
             />
+            <CheckboxGroupInput
+            name="categories"
+            label="Categories"
+            options={categories}
+            />
+
 
             <FormInput
               type="number"

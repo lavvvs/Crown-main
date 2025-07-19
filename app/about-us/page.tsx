@@ -53,7 +53,7 @@ export default function AboutPage() {
 
             <div className="relative">
               <Image
-                src="/placeholder.svg?height=600&width=500"
+                src="/logo.png"
                 alt="Luxury hair extensions showcase"
                 width={500}
                 height={600}

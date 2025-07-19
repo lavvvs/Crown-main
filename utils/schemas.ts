@@ -13,14 +13,22 @@ export const productSchema = z.object({
   featured: z.coerce.boolean(),
 
   // ✅ New fields
-  color: z.array(z.string()).nonempty(),
-  length: z.array(z.string()).nonempty(),
-  texture: z.array(z.string()).nonempty(),
+  color: z.array(z.string()).nonempty({ message: "Select at least one color." }),
+  length: z.array(z.string()).nonempty({ message: "Select at least one length." }),
+  texture: z.array(z.string()).nonempty({ message: "Select at least one texture." }),
+  categories: z.array(z.string()).nonempty({ message: "Select at least one category." }), // ✅ ADD THIS
   rating: z.coerce.number().min(1).max(5),
 });
-
 export const imageSchema = z.object({
-  image: validateImageFile(),
+  image: z
+    .instanceof(Blob)
+    .refine((file) => file.size > 0, { message: "Image is required" })
+    .refine((file) => file.size <= 5 * 1024 * 1024, {
+      message: "Image must be under 5MB",
+    })
+    .refine((file) => ["image/jpeg", "image/png", "image/webp"].includes(file.type), {
+      message: "Only JPG, PNG, and WEBP files are allowed",
+    }),
 });
 
 function validateImageFile() {

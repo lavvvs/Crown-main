@@ -1,6 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Phone, Mail, Tag, MessageCircle } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  Tag,
+  MessageCircle,
+  Instagram,
+  Facebook,
+  Youtube,
+  Twitter,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Footer() {
@@ -21,17 +30,18 @@ export function Footer() {
   ];
 
   const socialIcons = [
-    { name: "Instagram", icon: "📷", href: "#" },
-    { name: "Facebook", icon: "📘", href: "#" },
-    { name: "YouTube", icon: "📺", href: "#" },
-    { name: "Twitter", icon: "🐦", href: "#" },
+    { name: "Instagram", icon: Instagram, href: "#" },
+    { name: "Facebook", icon: Facebook, href: "#" },
+    { name: "YouTube", icon: Youtube, href: "#" },
+    { name: "Twitter", icon: Twitter, href: "#" },
   ];
 
   return (
     <>
       <footer className="bg-pink-50 text-pink-900 border-t border-pink-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+          <div className="flex flex-col lg:flex-row justify-between gap-8 lg:gap-12">
+
             {/* Company Info */}
             <div className="space-y-6">
               <div>
@@ -68,29 +78,6 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Shop Links */}
-            <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-pink-800">Shop</h3>
-              <ul className="space-y-3">
-                {shopLinks.map((link, i) => (
-                  <li key={i}>
-                    <Link
-                      href={`/category/${link
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")}`}
-                      className="flex items-center space-x-3 text-pink-600 hover:text-pink-800 transition-colors group"
-                    >
-                      <Tag
-                        size={16}
-                        className="text-pink-500 group-hover:text-pink-700 flex-shrink-0"
-                      />
-                      <span className="text-sm">{link}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
             {/* Policy Links */}
             <div className="space-y-6">
               <h3 className="text-xl font-semibold text-pink-800">Policy</h3>
@@ -117,11 +104,11 @@ export function Footer() {
 
             {/* Social + Payments */}
             <div className="space-y-6">
-              {/* Alibaba Logo */}
+              {/* Logo */}
               <div>
                 <Image
-                  src="/placeholder.svg?height=40&width=120"
-                  alt="Alibaba Partner"
+                  src="/logo.png"
+                  alt="Crown Enterprises"
                   width={120}
                   height={40}
                   className="bg-white border border-pink-200 rounded px-2 py-1"
@@ -138,11 +125,13 @@ export function Footer() {
                     <Link
                       key={i}
                       href={social.href}
+                      aria-label={social.name}
                       className="w-10 h-10 bg-pink-100 hover:bg-pink-600 text-pink-600 hover:text-white rounded-full flex items-center justify-center transition-all duration-300 group"
                     >
-                      <span className="text-lg group-hover:scale-110 transition-transform">
-                        {social.icon}
-                      </span>
+                      <social.icon
+                        size={20}
+                        className="group-hover:scale-110 transition-transform"
+                      />
                     </Link>
                   ))}
                 </div>
@@ -155,27 +144,12 @@ export function Footer() {
                 </h4>
                 <div className="space-y-4">
                   <Image
-                    src="/placeholder.svg?height=30&width=100"
-                    alt="Razorpay"
+                    src="/westen.png"
+                    alt="Western Union"
                     width={100}
                     height={30}
                     className="bg-white border border-pink-200 rounded px-2 py-1"
                   />
-                  <div className="grid grid-cols-4 gap-2">
-                    {["Visa", "Mastercard", "RuPay", "UPI"].map((name, i) => (
-                      <div
-                        key={i}
-                        className="bg-white border border-pink-100 rounded p-1 flex items-center justify-center"
-                      >
-                        <Image
-                          src={`/placeholder.svg?height=20&width=32`}
-                          alt={name}
-                          width={32}
-                          height={20}
-                        />
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
@@ -192,7 +166,7 @@ export function Footer() {
         </div>
       </footer>
 
-      {/* WhatsApp Button */}
+      {/* WhatsApp Floating Button */}
       <div className="fixed bottom-6 right-6 z-50">
         <Button
           asChild
@@ -205,7 +179,7 @@ export function Footer() {
             rel="noopener noreferrer"
             aria-label="Contact us on WhatsApp"
           >
-            <MessageCircle size={24} />
+            <MessageCircle size={25} />
           </a>
         </Button>
       </div>

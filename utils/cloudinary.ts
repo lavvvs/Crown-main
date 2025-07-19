@@ -8,7 +8,7 @@ cloudinary.config({
   secure: true,
 });
 
-export async function uploadImage(file: File): Promise<string> {
+export async function uploadImage(file: Blob): Promise<string> {
   const buffer = await file.arrayBuffer();
   const base64 = Buffer.from(buffer).toString("base64");
 
@@ -22,6 +22,7 @@ export async function uploadImage(file: File): Promise<string> {
 
   return result.secure_url;
 }
+
 
 export async function deleteImage(imageUrl: string) {
   // Extract public ID from URL

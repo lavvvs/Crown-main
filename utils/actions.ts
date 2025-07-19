@@ -11,6 +11,7 @@ import {
   reviewSchema,
   validateWithZodSchema,
 } from "./schemas";
+
 //import { deleteImage, uploadImage } from "./supabase";
 import { revalidatePath } from "next/cache";
 import { Cart } from "@prisma/client";
@@ -42,16 +43,9 @@ export const fetchFeaturedProducts = async () => {
   return products;
 };
 
-export const fetchAllProducts = async ({ search = "" }: { search: string }) => {
+// utils/actions.ts
+export const fetchAllProducts = async () => {
   return await db.product.findMany({
-    where: {
-      OR: [
-        { name: { contains: search, mode: "insensitive" } },
-        { color: { has: search } }, // Array field
-        { texture: { has: search } },
-      ],
-    },
-
     orderBy: {
       createdAt: "desc",
     },
@@ -71,68 +65,63 @@ export const fetchSingleProduct = async (productId: string) => {
 };
 
 export const createProductAction = async (
-  prevState: any,
+  _prevState: any,
   formData: FormData
-): Promise<{ message: string }> => {
-  const user = await getAuthUser();
-
+) => {
   try {
-    const rawData = {
-      ...Object.fromEntries(formData),
-      color: formData.getAll("color[]"),
-      length: formData.getAll("length[]"),
-      texture: formData.getAll("texture[]"),
-    };
-    const file = formData.get("image") as File;
+    const user = await getAuthUser();
 
-    const validatedFields = validateWithZodSchema(productSchema, rawData);
-    const validatedFile = validateWithZodSchema(imageSchema, { image: file });
-    const fullPath = await uploadImage(validatedFile.image);
+    const name = formData.get("name") as string;
+    const price = parseFloat(formData.get("price") as string);
+    const featured = formData.get("featured") === "on";
+    const rating = parseFloat(formData.get("rating") as string);
+    const image = formData.get("image") as File;
 
-    // 🆕 Extract extra fields
+    const uploadedUrl = await uploadImage(image);
+
     const color = formData.getAll("color[]") as string[];
     const length = formData.getAll("length[]") as string[];
     const texture = formData.getAll("texture[]") as string[];
-
-    const rating = parseFloat(formData.get("rating") as string);
+    const categories = formData.getAll("categories[]") as string[]; // ✅ NEW
 
     await db.product.create({
       data: {
-        name: validatedFields.name,
-        price: validatedFields.price,
-        featured: validatedFields.featured,
-        image: fullPath,
+        name,
+        price,
+        featured,
+        image: uploadedUrl,
+        rating,
         clerkId: user.id,
-        color: validatedFields.color,
-        length: validatedFields.length,
-        texture: validatedFields.texture,
-        rating: validatedFields.rating,
+        color,
+        length,
+        texture,
+        categories, // ✅ NEW
       },
     });
 
-    // ✅ Revalidate pages conditionally
     revalidatePath("/admin/products");
     revalidatePath("/category/all-products");
-    if (validatedFields.featured) {
-      revalidatePath("/");
-    }
+    if (featured) revalidatePath("/");
 
-    redirect("/admin/products?status=created");
-
-    return { message: "Product created successfully" };
+    return { message: "Product created ✅" };
   } catch (error) {
-    return renderError(error);
+    console.error("Create product error:", error);
+    return { message: "Failed to create product." };
   }
 };
-
 export const fetchAdminProducts = async () => {
-  await getAdminUser();
-  const products = await db.product.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  return products;
+  try {
+    const products = await db.product.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return products;
+  } catch (error) {
+    console.error("Error fetching admin products:", error);
+    return []; // Return empty array to avoid crashing page
+  }
 };
 
 export const deleteProductAction = async (prevState: { productId: string }) => {
@@ -154,7 +143,6 @@ export const deleteProductAction = async (prevState: { productId: string }) => {
 };
 
 export const fetchAdminProductDetails = async (productId: string) => {
-  await getAdminUser();
   const product = await db.product.findUnique({
     where: {
       id: productId,
@@ -163,18 +151,24 @@ export const fetchAdminProductDetails = async (productId: string) => {
   if (!product) redirect("/admin/products");
   return product;
 };
-
 export const updateProductAction = async (
-  prevState: any,
+  _prevState: any,
   formData: FormData
-) => {
-  await getAdminUser();
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+
+  if (user.id !== process.env.ADMIN_USER_ID) {
+    return { message: "Unauthorized" };
+  }
+
   try {
     const productId = formData.get("id") as string;
-    // Properly extract array values
+
     const color = formData.getAll("color[]") as string[];
     const length = formData.getAll("length[]") as string[];
     const texture = formData.getAll("texture[]") as string[];
+    const categories = formData.getAll("categories[]") as string[];
+
     const rating = parseFloat(formData.get("rating") as string);
     const featured = formData.get("featured") === "on";
 
@@ -183,6 +177,7 @@ export const updateProductAction = async (
       color,
       length,
       texture,
+      categories,
       rating,
       featured,
     };
@@ -190,9 +185,7 @@ export const updateProductAction = async (
     const validatedFields = validateWithZodSchema(productSchema, rawData);
 
     await db.product.update({
-      where: {
-        id: productId,
-      },
+      where: { id: productId },
       data: {
         name: validatedFields.name,
         price: validatedFields.price,
@@ -201,41 +194,46 @@ export const updateProductAction = async (
         length: validatedFields.length,
         texture: validatedFields.texture,
         rating: validatedFields.rating,
+        categories: validatedFields.categories,
       },
     });
-    revalidatePath(`/admin/products/${productId}/edit`);
-    redirect(`/admin/products/${productId}/edit?status=updated`);
 
-    return { message: "Product updated successfully" };
+    revalidatePath(`/admin/products/${productId}/edit`);
+
+    return { message: "Product updated successfully" }; // ✅ just return message
   } catch (error) {
-    return renderError(error);
+    return { message: "Something went wrong. Please try again." };
   }
 };
 export const updateProductImageAction = async (
-  prevState: any,
+  _prevState: any,
   formData: FormData
 ) => {
   await getAuthUser();
+
   try {
-    const image = formData.get("image") as File;
+    const image = formData.get("image");
     const productId = formData.get("id") as string;
     const oldImageUrl = formData.get("url") as string;
 
+    if (!(image instanceof Blob)) {
+      throw new Error("Invalid image file");
+    }
+
     const validatedFile = validateWithZodSchema(imageSchema, { image });
-    const fullPath = await uploadImage(validatedFile.image);
+
+    const fullPath = await uploadImage(validatedFile.image); // ✅ Accepts Blob now
     await deleteImage(oldImageUrl);
+
     await db.product.update({
-      where: {
-        id: productId,
-      },
-      data: {
-        image: fullPath,
-      },
+      where: { id: productId },
+      data: { image: fullPath },
     });
+
     revalidatePath(`/admin/products/${productId}/edit`);
     redirect(`/admin/products/${productId}/edit?status=image`);
 
-    return { message: "Product Image updated successfully" };
+    return { message: "Product image updated successfully" };
   } catch (error) {
     return renderError(error);
   }

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Crown Enterprises",
   description:
     "Shop top-quality human hair extensions, wigs, and more. 100% Virgin Hair.",
-  generator: "v0.dev",
+  
 };
 
 export default function RootLayout({

@@ -34,9 +34,9 @@ function LinksDropdown() {
 
   const links = [
     { label: "home", href: "/" },
-    { label: "about", href: "/about" },
-    { label: "contact", href: "/contact" },
-    { label: "products", href: "/products" },
+    { label: "about", href: "/about-us" },
+    { label: "contact", href: "/contact-us" },
+    { label: "products", href: "/category/all-products" },
     ...(isAdmin
       ? [{ label: "dashboard", href: "/admin/products/create" }]
       : []), // ✅ include if admin

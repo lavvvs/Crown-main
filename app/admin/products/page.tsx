@@ -29,14 +29,14 @@ async function AdminProductsPage() {
         <TableHeader className="bg-pink-100 text-pink-800">
           <TableRow>
             <TableHead className="text-pink-700">Product Name</TableHead>
-            <TableHead className="text-pink-700">Company</TableHead>
+
             <TableHead className="text-pink-700">Price</TableHead>
             <TableHead className="text-pink-700">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.map((item) => {
-            const { id: productId, name, company, price } = item;
+            const { id: productId, name, price } = item;
             return (
               <TableRow
                 key={productId}
@@ -50,7 +50,7 @@ async function AdminProductsPage() {
                     {name}
                   </Link>
                 </TableCell>
-                <TableCell className="text-pink-700">{company}</TableCell>
+                <TableCell className="text-pink-700"></TableCell>
                 <TableCell className="text-pink-700">
                   {formatCurrency(price)}
                 </TableCell>
